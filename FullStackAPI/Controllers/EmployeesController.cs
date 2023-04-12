@@ -32,5 +32,44 @@ namespace FullStackAPI.Controllers
             await fullStackDbContext.SaveChangesAsync();
             return Ok(employee);
         }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetEmployee([FromRoute] int id)
+        {
+           var employee= await fullStackDbContext.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            if (employee == null)
+                return NotFound();
+            return Ok(employee);
+
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<IActionResult> UpdateEmployee([FromRoute] int id,Employee employee)
+        {
+            var emp= await fullStackDbContext.Employees.FindAsync(id);
+            if (emp == null)
+                return NotFound();
+            emp.Name = employee.Name;
+            emp.Email = employee.Email;
+            emp.Phone = employee.Phone;
+            emp.Salary = employee.Salary;
+            emp.Department = employee.Department;
+            await fullStackDbContext.SaveChangesAsync();
+            return Ok(emp);
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> DeleteEmployee([FromRoute] int id)
+        {
+            var emp = await fullStackDbContext.Employees.FindAsync(id);
+            if (emp == null)
+                return NotFound();
+             fullStackDbContext.Employees.Remove(emp);
+            await fullStackDbContext.SaveChangesAsync();
+            return Ok(emp);
+        }
     }
 }
